@@ -1,0 +1,34 @@
+datasets:
+  mmo_index:
+    connector: elasticsearch
+    table: mmo_index
+    #chunk: 500
+    #timeout: 30
+    #thread_count: 1
+    #safe: False
+    #max_tries: 1
+    body:
+      settings:
+        #index.store.type: mmapfs 
+        index:
+          refresh_interval: 30s
+          number_of_replicas: 0
+      mappings:
+        mmo_index:       
+          _all:
+            enabled: False
+          dynamic: False
+          properties:
+            matchid_id:
+              type: keyword
+            #above lines are useless if deaths not used for matching
+            matchid_name_match:
+              type: text
+            matchid_date_birth_str:
+              type: keyword
+            matchid_date_death_src:
+              type: keyword              
+            matchid_location_city:
+              type: keyword
+            matchid_location_country:
+              type: keyword

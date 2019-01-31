@@ -1,0 +1,7 @@
+datasets:
+  sifa_matched_backup:
+    connector: upload
+    table: sifa_matched_backup
+    type: csv
+    sep: ";"
+    encoding: "utf8"

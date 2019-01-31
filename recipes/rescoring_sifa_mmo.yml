@@ -1,0 +1,22 @@
+recipes:
+  rescoring_sifa_mmo:
+    input: sifa_matched
+    output: 
+      dataset: sifa_matched
+      mode: update
+    steps:
+      - apply_model:
+          name: sifa_mmo_ml
+          numerical: .*(hit_score_(?!ml).*|population|surface|matchid_hit_distance)$
+          target: matchid_hit_score_ml
+      - eval:
+          - confiance: >
+              try:
+                cell = round(0.7*float(matchid_hit_score_ml)+30*float(matchid_hit_score))
+              except:
+                try:
+                  cell = matchid_hit_score_ml
+                except:
+                  cell = matchid_hit_score
+          - scoring_version: str("{}-randomforest-{}").format(re.sub("-.*","",scoring_version),str(datetime.datetime.now()))
+          

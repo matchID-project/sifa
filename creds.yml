@@ -1,0 +1,4 @@
+groups:
+  sifa:
+    projects:
+      sifa: {admin: admin}

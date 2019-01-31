@@ -1,0 +1,7 @@
+datasets:
+  mmo:
+    connector: upload
+    table: mmo.csv
+    type: csv
+    sep: "|"
+    encoding: "utf-8"

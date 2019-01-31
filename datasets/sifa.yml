@@ -1,0 +1,8 @@
+datasets:
+  sifa:
+    connector: upload
+    table: sifaB.csv
+    chunk: 50
+    type: csv
+    sep: "|"
+    encoding: "utf-8"

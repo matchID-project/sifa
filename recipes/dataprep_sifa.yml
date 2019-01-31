@@ -1,0 +1,53 @@
+recipes:
+  dataprep_sifa:
+    input: sifa
+    test_chunk_size: 200
+    output: replace_output
+      
+    steps:
+      - eval:
+        #tag dataset and records with uniq id
+          - matchid_src: str("sifa")
+          #location
+          - matchid_location_city_src: str("")
+          - matchid_location_citycode_src: lieu_nais if "99" not in lieu_nais else "" 
+          - matchid_location_countrycode_src: lieu_nais 
+      - map:
+          matchid_id: ine_rnie
+          #date
+          matchid_date_birth_src: date_nais
+          #name
+          matchid_name_last_src: nom
+          matchid_name_first_src: 
+            - prenom1
+            - prenom2
+            - prenom3
+
+          #sex
+          matchid_sex_src: sexe
+          matchid_sex: sexe
+      - keep: 
+          select: matchid_.*
+      
+      - french_name_normalize:
+      - french_name_frequency:
+      
+      #location
+      - country_code_cog:
+      - french_citycode:
+          
+      # dates
+      - map:
+          matchid_date_birth: matchid_date_birth_src      
+      - map:
+          matchid_date_birth_str: matchid_date_birth  
+      - parsedate : 
+          select: matchid_date_birth$
+          format: "%d%m%Y"
+      - eval:
+          - matchid_location_city: matchid_location_city if "Ooops" not in matchid_location_city else ""
+          - matchid_location_latitude: geopoint(matchid_location_city_geopoint_2d)[0] if ('POINT' in matchid_location_city_geopoint_2d) else matchid_location_country_latitude if ("matchid_location_country_latitude" in row.keys()) else 90
+          - matchid_location_longitude: geopoint(matchid_location_city_geopoint_2d)[1] if ('POINT' in matchid_location_city_geopoint_2d) else matchid_location_country_longitude if ("matchid_location_country_latitude" in row.keys()) else 90 
+      - to_float: 
+          select: ^matchid_location_(latitude|longitude)$
+          na_value: 90
