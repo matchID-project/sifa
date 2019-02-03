@@ -1,0 +1,17 @@
+recipes:
+  scoring_date_sexe_sifa:
+    input: replace_input
+    output: replace_output
+    steps:
+      # sexe
+      - exec: 
+          df['matchid_hit_score_sex'] = np.where(df['sexe'] == df['hit_Sexe'], 1, 0.7)
+      # date de naissance
+      - exec: >
+          df['matchid_hit_score_date'] = np.where( 
+            df['date_nais'] == df['hit_datenaissance_sngi'],
+            1,
+            df.apply(lambda row: 
+                        round((levenshtein_norm(row['date_nais'],row['hit_datenaissance_sngi'])**2)
+                        *(0.9 if re.search('0101$',row['date_nais']) else 1) ,2),
+                      axis = 1))

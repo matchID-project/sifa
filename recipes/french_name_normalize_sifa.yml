@@ -1,0 +1,18 @@
+recipes:
+  french_name_normalize_sifa:
+    input: sifa
+    output: replace_output
+    steps:
+    steps:
+      - exec:
+          df['matchid_name_match'] = df['nom']+ " " + df['prenom1'] + np.where(df['prenom2']=="", "", " " + df['prenom2']) + np.where(df['prenom3']=="", "", " " + df['prenom3'])
+      - map:
+          matchid_name_last_match: nom
+          matchid_name_first_match: prenom1
+          matchid_name_first_alter_match: [prenom2, prenom3]
+      - normalize:
+          select: matchid_name_.*match
+      - replace:
+          select: matchid_name_match
+          regex:
+            - (^|\s)(le|du|de|de la|da|del|los|l)(\s): '\1\2'

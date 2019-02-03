@@ -1,0 +1,13 @@
+recipes:
+  french_name_normalize_mmo:
+    input: mmo
+    output: replace_output
+    steps:
+      - exec:
+          - df['matchid_name_match'] = df['NomFamille']+ " " + df['Prenoms']
+      - normalize:
+          select: matchid_name_.*match
+      - replace:
+          select: matchid_name_.*match
+          regex:
+            - (^|\s)(le|du|de|de la|da|del|los|l)(\s): '\1\2'

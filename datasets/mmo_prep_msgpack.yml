@@ -1,0 +1,5 @@
+datasets:
+  mmo_prep_msgpack:
+    connector: upload
+    table: mmo_prep_msgpack
+    type: msgpack 

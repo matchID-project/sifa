@@ -1,0 +1,4 @@
+datasets:
+  mmo_prep:
+    connector: postgres
+    table: mmo_prep

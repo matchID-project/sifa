@@ -1,0 +1,4 @@
+datasets:
+  sifa_prep:
+    connector: postgres
+    table: sifa_prep

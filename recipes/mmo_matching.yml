@@ -1,19 +1,22 @@
 recipes:
   mmo_matching:
+    test_chunk_size:
     input: 
       dataset: sifa
-      chunk: 100
+      chunk: 500
     output: sifa_matched
-    threads: 8
+    threads: 4
     steps:
       - dataprep_sifa:
       - join: 
           type: elasticsearch
           dataset: mmo_index
           prefix: hit_
-          #keep_unmatched: True
+          # keep_unmatched: True
           query:
-            size: 40
+            size: 20
+            # pruning des petits scores
+            min_score: 25
             query:
               bool:
                 must:
@@ -25,16 +28,16 @@ recipes:
                                   matchid_name_match:
                                     query: matchid_name_last_match
                                     fuzziness: auto
-                              - match:
-                                  matchid_date_birth_str: matchid_date_birth_str
                         - bool:
                             must:
                               - match:
-                                  matchid_name_match: matchid_name_last_match
+                                  matchid_name_match:
+                                    query: matchid_name_first_match
+                                    fuzziness: auto
                               - match:
-                                  matchid_date_birth_str: 
-                                    query: matchid_date_birth_str
-                                    fuzziness: 2
+                                  datenaissance_sngi: 
+                                    query: date_nais
+                                    fuzziness: 1
                       minimum_should_match: 1
                 should:
                   - bool:
@@ -45,47 +48,30 @@ recipes:
                                   matchid_name_match: matchid_name_last_match
                             end: 1
                         - match:
+                            datenaissance_sngi: date_nais
+                        - match:
                             matchid_name_match: matchid_name_first_match
                         - match:
-                            matchid_location_city: matchid_location_city_src
+                            matchid_name_match: matchid_name_last_match
+                        - match:
+                            matchid_location_city: matchid_location_city
                         - match:
                             matchid_location_country: matchid_location_country
                       minimum_should_match: 2
       - rename:
-          hit_matchid_hit_number: hit_total
+          hit_matchid_hit_es_number: hit_total
           hit_matchid_score_es_max: hit_max_score
           hit_matchid_score_es: hit_score
-      - keep:
-          select: .*
-          where: hit_matchid_score_es >  min(max(hit_matchid_hit_number,15),20)     
-      - scoring:
-      - keep:
-          select: .*
-          where: confiance > 20
-      # group aggregations for multimatching    
-      - groupby:
-          select: matchid_id
-          transform:
-            - hit_matchid_id: count
-            - matchid_hit_score: max
-      - groupby:
-          select: matchid_id            
-          rank:
-            - matchid_hit_score
-      # filtering of multimatch (filter highly confusing names)
-      - replace: 
-          select: .*str
-          regex: 
-             - '(..)(..)(....)': '\3-\2-\1'
       
-      - keep:
-          select: .*
-          where: (matchid_hit_score_rank == 1) | (matchid_hit_score > min(0.5,matchid_hit_score_max-1))       
+      # scoring
+      - scoring_date_sexe_sifa:
+      - scoring_name_sifa:
+      - scoring_location_sifa:
       
-      - eval:
-          - confiance: round(100*matchid_hit_score)
-      #- diff: # optionnal diff method which display difference with hits
-      - keep:
-          select: .* #(diff.*|confiance|score_name|score_location|score_sex|score_date|hit_distance)$
-          where: confiance>15
+      - exec: 
+          - df['matchid_hit_score'] = (100.0*df.matchid_hit_score_name*df.matchid_hit_score_date*(0.2+0.8*df.matchid_hit_score_location)*(df.matchid_hit_score_sex)).round(0)
+          - df = df[df.matchid_hit_score > 30]
+          - df['confiance'] = df.matchid_hit_score
+          - df['scoring_version'] = "scoring_lev"
+
      

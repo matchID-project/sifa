@@ -12,6 +12,7 @@ datasets:
         #index.store.type: mmapfs 
         index:
           refresh_interval: 30s
+          number_of_shards: 24          
           number_of_replicas: 0
       mappings:
         mmo_index:       
@@ -21,13 +22,10 @@ datasets:
           properties:
             matchid_id:
               type: keyword
-            #above lines are useless if deaths not used for matching
             matchid_name_match:
               type: text
-            matchid_date_birth_str:
+            datenaissance_sngi:
               type: keyword
-            matchid_date_death_src:
-              type: keyword              
             matchid_location_city:
               type: keyword
             matchid_location_country:

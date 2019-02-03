@@ -1,0 +1,71 @@
+recipes:
+  french_location_sifa:
+    input: sifa
+    output: replace_output
+    test_chunk_size: 1000
+    steps:
+      # pays
+      - exec:
+          - df['matchid_location_countrycode_cog']=np.where(df['lieu_nais'].str.contains("99"),df['lieu_nais'],"XXXXX")
+      - replace:
+          select: matchid_location_countrycode_cog
+          regex: # algérie, réunion, mayotte, anciennes colonies
+            - ^98201: "99336" # MAURITANIE
+            - ^98202: "99341" # SENEGAL
+            - ^98203: "99330" # GUINEE
+            - ^98204: "99326" # COTE D'IVOIRE
+            - ^98205: "99327" # BENIN
+            - ^98206: "99335" # MALI
+            - ^98207: "99337" # NIGER
+            - ^98208: "99345" # TOGO
+            - ^98209: "99331" # BURKINA
+            - ^98301: "99328" # GABON
+            - ^98302: "99324" # CONGO
+            - ^98303: "99323" # REP CENTRAFRICAINE
+            - ^98304: "99344" # TCHAD
+            - ^98305: "99322" # CAMEROUN
+            - ^98401: "99333" # MADAGASCAR
+            - ^98402: "99397" # COMORES
+            - ^98405: XXXXX # LA REUNION > FR
+            - ^98406: "99399" # DJIBOUTI
+            - ^9(1|2|3|4)352$: "99352" #algérie 
+            - ^98(4|5|6|7|8)(..)$: "XXXXX" #mayotte, nlle calédonie, ...
+            - ^9[0-5](...)$: "XXXXX" # idf+belfort
+            - ^97[1-6](..)$: "XXXXX" # DOMs
+            - ^[0-8]....$: "XXXXX" 
+
+      - join:
+          dataset: countries
+          type: in_memory
+          strict: 
+            matchid_location_countrycode_cog: COG
+          select:
+            matchid_location_country: LIBCOG
+            matchid_location_countrycode: CODEISO3
+            matchid_location_country_latitude: latitude
+            matchid_location_country_longitude: longitude
+
+      - map:
+          matchid_location_citycode: lieu_nais
+      - replace:
+          select: matchid_location_citycode
+          regex:
+            - ^9.352$: '' #algérie
+            - ^985(..)$: '976\1' # mayotte
+            - ^98405: '97409' # mapping "La Réunion" to "Saint-Denis 1, La Réunion" 
+            - ^98(2|3|4).*$: '' # anciennes colonies
+            - ^99.*$: '' #pays étrangers
+      - join:
+          dataset: french_citycodes
+          type: in_memory
+          strict: 
+            matchid_location_citycode: insee_code
+          select: 
+            matchid_location_citycode_history: insee_code_history
+            matchid_location_city: name
+            matchid_location_city_alter: newest_name
+            matchid_location_depcode: dep_code
+            matchid_location_depcode_alter: newest_dep_code
+            matchid_location_city_population: population
+            matchid_location_city_surface: surface
+            matchid_location_city_geopoint_2d: geopoint_2d
