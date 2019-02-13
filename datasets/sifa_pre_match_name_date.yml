@@ -1,0 +1,4 @@
+datasets:
+  sifa_pre_match_name_date:
+    connector: postgres
+    table: sifa_pre_match_name_date

@@ -1,10 +1,10 @@
 datasets:
-  sifa_matched:
+  sifa_matched_sql:
     connector: elasticsearch
-    table: sifa_matched
+    table: sifa_matched_sql
     body:
       mappings:
-        sifa_matched:       
+        sifa_matched_sql:       
           properties:
             matchid_id:
               type: keyword 

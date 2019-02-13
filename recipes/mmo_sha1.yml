@@ -1,0 +1,12 @@
+recipes:
+  mmo_sha1:
+    input: mmo
+    output: mmo.sha1
+    threads: 3
+    steps:
+      - eval:
+          - sha1: sha1(row)
+      - exec:
+          - df['matchid_id'] = df['CodeAPET'] + df['DispPolitiquePublique'] + df['EffectifFinPeriode'] + df['H_Salarie_SQN']        
+      - keep:
+          select: matchid_id|sha1

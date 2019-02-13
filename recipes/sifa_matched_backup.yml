@@ -1,11 +1,11 @@
 recipes:
   sifa_matched_backup:
     input: 
-      dataset: sifa_matched
-    output: sifa_matched_backup
+      dataset: sifa_matched_backup
+    output: sifa_matched
     threads: 10
     steps:
-      - eval:
-         - validation_done:  str('') if ('validation_done' not in row.keys()) else validation_done         
-         - validation_decision:  str('') if ('validation_decision' not in row.keys()) else validation_decision         
-         - validation_indecision:  str('') if ('validation_indecision' not in row.keys()) else validation_indecision         
+      #- eval:
+      #   - validation_done:  str('') if ('validation_done' not in row.keys()) else validation_done         
+      #   - validation_decision:  str('') if ('validation_decision' not in row.keys()) else validation_decision         
+      #   - validation_indecision:  str('') if ('validation_indecision' not in row.keys()) else validation_indecision         

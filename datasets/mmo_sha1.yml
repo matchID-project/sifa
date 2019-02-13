@@ -1,0 +1,7 @@
+datasets:
+  mmo_sha1:
+    connector: upload
+    table: mmo.sha1
+    type: csv
+    sep: "\\s+|,|;"
+    encoding: "utf8"

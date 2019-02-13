@@ -1,0 +1,11 @@
+datasets:
+  mmo_redis:
+    connector: redisearch
+    table: mmo_redis
+    index:
+      - matchid_id
+      - matchid_name_match
+      - datenaissance_sngi
+      - matchid_location_city
+      - matchid_location_country
+

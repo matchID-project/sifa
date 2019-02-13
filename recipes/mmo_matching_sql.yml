@@ -1,0 +1,21 @@
+recipes:
+  mmo_matching_sql:
+    test_chunk_size: 100
+    threads: 10
+    input: 
+      dataset: sifa_pre_match_union
+      chunk: 10000
+    output: sifa_matched_sql
+    steps:
+      # scoringconfc
+      - exec:
+          - df.fillna(value="", inplace=True)  
+      - scoring_date_sexe_sifa:
+      - scoring_name_sifa:
+      - scoring_location_sifa:
+      - exec: 
+          - df['matchid_hit_score'] = (100.0*df.matchid_hit_score_name*df.matchid_hit_score_date*(0.2+0.8*df.matchid_hit_score_location)*(df.matchid_hit_score_sex)).round(0)
+      - exec:    
+          - df = df[df.matchid_hit_score > 30]
+          - df['confiance'] = df.matchid_hit_score
+          - df['scoring_version'] = "scoring_lev"

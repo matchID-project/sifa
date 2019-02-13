@@ -5,6 +5,9 @@ recipes:
     steps:
       - exec:
           - df['matchid_name_match'] = df['NomFamille']+ " " + df['Prenoms']
+      - map:
+          matchid_name_last_match: NomFamille
+          matchid_name_first_match: Prenoms      
       - normalize:
           select: matchid_name_.*match
       - replace:

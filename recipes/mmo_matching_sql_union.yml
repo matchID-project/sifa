@@ -1,0 +1,16 @@
+recipes:
+  mmo_matching_sql_union:
+    input:
+      dataset: sifa_pre_match_exact
+      select: >
+        select *, 'sql_exact' as "hit_type" from sifa_pre_match_exact
+        union
+        select *, 'sql_levenshtein' as "hit_type" from sifa_pre_match_lev
+        union
+        select *, 'sql_name_last+date' as "hit_type" from sifa_pre_match_name_date
+        union
+        select *, 'sql_name_last+first' as "hit_type" from sifa_pre_match_name
+        union
+        select *, 'sql_date' as "hit_type" from sifa_pre_match_date
+    output: sifa_pre_match_union
+    steps:

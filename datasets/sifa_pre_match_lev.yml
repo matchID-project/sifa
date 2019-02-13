@@ -1,0 +1,4 @@
+datasets:
+  sifa_pre_match_lev:
+    connector: postgres
+    table: sifa_pre_match_lev

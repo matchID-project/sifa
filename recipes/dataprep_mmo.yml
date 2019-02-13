@@ -3,9 +3,11 @@ recipes:
     test_chunk_size: 1000
     input: 
       dataset: mmo
-      chunk: 10000
-    output: mmo_prep
-    threads: 10
+      chunk: 100000
+    output: 
+      dataset: mmo_pg
+      chunk: 100000
+    threads: 8
     steps:
       - exec: 
           - df['matchid_id'] = df['CodeAPET'] + df['DispPolitiquePublique'] + df['EffectifFinPeriode'] + df['H_Salarie_SQN']        

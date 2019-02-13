@@ -1,11 +1,11 @@
 recipes:
   mmo_matching:
-    test_chunk_size:
+    test_chunk_size: 50
     input: 
       dataset: sifa
       chunk: 500
     output: sifa_matched
-    threads: 4
+    threads: 1
     steps:
       - dataprep_sifa:
       - join: 

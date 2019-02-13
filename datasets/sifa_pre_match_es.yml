@@ -1,0 +1,4 @@
+datasets:
+  sifa_pre_match_es:
+    connector: postgres
+    table: sifa_pre_match_es

@@ -72,4 +72,4 @@ recipes:
               )
             ).round(2)
       - exec: 
-          df = df[(df.matchid_hit_score_name * df.matchid_hit_score_date) > 0.4]
+          df = df[(df.matchid_hit_score_name * df.matchid_hit_score_date) > 0.3]

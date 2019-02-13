@@ -2,9 +2,11 @@ recipes:
   dataprep_sifa:
     input: 
       dataset: sifa
-      chunk: 10000
+      chunk: 30000
     test_chunk_size: 100
-    output: sifa_prep
+    output: 
+      dataset: sifa_prep
+      chunk: 30000
     threads: 10
     steps:
       - exec:

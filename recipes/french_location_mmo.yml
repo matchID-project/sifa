@@ -1,20 +1,60 @@
 recipes:
   french_location_mmo:
+    test_chunk_size: 1000
     input: mmo
     steps:
        # lieu de naissance
        - exec:
           - df['matchid_location_countrycode'] = np.where(df['dep_naissance_sngi'] == "99", df['commune_naissance_sngi'], "FRANCE")
           - df['matchid_location_country'] = np.where(df['dep_naissance_sngi'] == "99", df['commune_naissance_sngi'], "FRANCE")
-          - df['matchid_location_city'] = np.where(df['dep_naissance_sngi'] == "99", "", df['commune_naissance_sngi'])
+          - df['matchid_location_city_src'] = np.where(df['dep_naissance_sngi'] == "99", "", df['commune_naissance_sngi'])
        
        - replace:
-          select: matchid_location_countrycode
-          regex: 
-            - '^((?!FRANCE).)*$': 'XXX'
-            - 'FRANCE': 'FRA'
+           select: matchid_location_countrycode
+           regex: 
+             - '^((?!FRANCE).)*$': 'XXX'
+             - 'FRANCE': 'FRA'
+       - replace:
+           select: matchid_location_country
+           regex:
+             - 'VIET NAM NORD': 'VIET NAM'
+             - 'VIET NAM SUD': 'VIET NAM'
+             - 'CAMEROUN TOGO': 'CAMEROUN'
+             - 'SOUDAN ANGLO EGYPTIEN, KENYA, OU': 'SOUDAN'
+             
+             #on règle des soucis de libellés purs
+             - 'PALESTINE ETAT': 'PALESTINE'
+             - 'TURQUIE EUROPE': 'TURQUIE'
+             - 'COREE REPUBLIQUE POPULAIRE DEMO': 'COREE'
+             - 'COREE REPUBLIQUE': 'COREE'
+             - 'MACEDOINE REPUBLIQUE YOUGOSL': 'MACEDOINE'
+             - 'REPUBLIQUE YOUGOSLAVE MAC': 'MACEDOINE'
+             - 'ALLEMAGNE REPUBLIQUE FEDERALE': 'ALLEMAGNE'
+             - 'ALLEMAGNE REPUBLIQUE DEMOCRATIQ': 'ALLEMAGNE'
+             - 'CONGO REPUBLIQUE DEMOCRATIQUE': 'CONGO'
+             - 'DOMINICAINE REPUBLIQUE': 'REPUBLIQUE DOMINICAINE'
+             
+             #pays disparu
+             - 'KOSOVO': 'YOUGOSLAVIE'
+             - 'BOSNIE HERZEGOVINE': 'YOUGOSLAVIE'
+             - 'SERBIE': 'YOUGOSLAVIE'
+             - 'MACEDOINE REPUBLIQUE YOUGOSL': 'YOUGOSLAVIE'
+             - 'REPUBLIQUE YOUGOSLAVE MAC': 'YOUGOSLAVIE'
+                            
+             #iles d'un pays ancienne colonie
+             - 'ACORES MADERE': 'PORTUGAL'
+             - 'ILES PORTUGAISES OCEAN INDI': 'PORTUGAL'
+             - 'TERRITOIRE DES PAYS BAS': 'PAYS BAS'
+             - 'ANTILLES NEERLANDAISES': 'PAYS BAS'
+             - 'TERR USA AMERIQUE PORTO R': 'ETATS UNIS'
+                            
+             #ce sont des pays étrangers différents mais très proches
+             - 'BIELORUSSIE': 'RUSSIE'
+             - 'MOLDAVIE': 'ROUMANIE'
+             - 'GUINEE BISSAU': 'GUINEE'
+             - 'GUINEE EQUATORIALE': 'GUINEE'       
        - map:
-           matchid_location_city_norm: matchid_location_city
+           matchid_location_city_norm: matchid_location_city_src
            matchid_location_depcode: dep_naissance_sngi
        - normalize: 
            select: matchid_location_city_norm
@@ -39,6 +79,8 @@ recipes:
              matchid_location_city_geopoint_2d: geopoint_2d
        # - exec: # race intermédiaire pour évaluer si le fuzzy permet d'améliorer le match
        #     df['matchid_location_city_diff']= np.where(df['matchid_location_city_norm'] == df['matchid_location_city_norm_match'], "", df['matchid_location_city_norm'] + '<>' + df['matchid_location_city_norm_match'])
+       - exec:
+          - df['matchid_location_city'] = np.where(df['matchid_location_city'] == "", df['matchid_location_city_src'], df['matchid_location_city'])       
        - delete:
            select: matchid_location_city_norm.*
            

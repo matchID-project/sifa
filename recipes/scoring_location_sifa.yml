@@ -4,7 +4,7 @@ recipes:
     output: replace_output
     steps:
       # scoring lieu
-      - exec:
+      - exec: 
           - df['matchid_hit_score_location_citycode'] = np.where(df['matchid_location_citycode'] == df['hit_matchid_location_citycode'], 1, 0)
           - df['matchid_hit_score_location_city'] = np.where(df['matchid_location_city'] == df['hit_matchid_location_city'], 1, 0)
       - exec: >
@@ -35,7 +35,7 @@ recipes:
           df['matchid_hit_score_location_distance'] = np.where(
             df.matchid_hit_distance == 9000,
             0,
-            ((100*40/(40+df.matchid_hit_distance))/100).round(2)
+            ((100*40/(40+df.matchid_hit_distance.astype(float)))/100).round(2)
             )
       - exec:
           df['matchid_hit_score_location_depcode'] = np.where(df['matchid_location_depcode'] == df['hit_matchid_location_depcode'],1,0)
