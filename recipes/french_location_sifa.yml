@@ -69,3 +69,8 @@ recipes:
             matchid_location_city_population: population
             matchid_location_city_surface: surface
             matchid_location_city_geopoint_2d: geopoint_2d
+      - exec: >
+          df['matchid_location_depcode'] = np.where(
+            (df['matchid_location_depcode'] == "") & (df['lieu_nais'].str.contains("99")),
+            "99",
+            df['matchid_location_depcode'])

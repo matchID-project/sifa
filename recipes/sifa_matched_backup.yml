@@ -1,8 +1,16 @@
 recipes:
   sifa_matched_backup:
     input: 
-      dataset: sifa_matched_backup
-    output: sifa_matched
+      chunked: False
+      dataset: sifa_matched
+      select:
+        query:
+          constant_score: 
+            filter:
+              exists:
+                field:
+                  validation_done
+    output: sifa_matched_backup
     threads: 10
     steps:
       #- eval:

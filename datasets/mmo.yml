@@ -1,7 +1,7 @@
 datasets:
   mmo:
     connector: upload
-    table: mmo.csv
+    table: mmoB.csv
     type: csv
     sep: "|"
     encoding: "utf-8"

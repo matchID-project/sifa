@@ -1,7 +1,0 @@
-datasets:
-  sifa_matched_annot:
-    connector: upload
-    table: sifa_matched_annot.csv
-    type: csv
-    sep: ";"
-    encoding: "utf8"

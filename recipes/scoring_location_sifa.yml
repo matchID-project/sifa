@@ -1,12 +1,27 @@
 recipes:
   scoring_location_sifa:
-    input: replace_input
+    input: #sifa_pre_match_union
+      dataset: sifa_pre_match_union
     output: replace_output
+    test_chunk_size: 1000
     steps:
       # scoring lieu
-      - exec: 
-          - df['matchid_hit_score_location_citycode'] = np.where(df['matchid_location_citycode'] == df['hit_matchid_location_citycode'], 1, 0)
-          - df['matchid_hit_score_location_city'] = np.where(df['matchid_location_city'] == df['hit_matchid_location_city'], 1, 0)
+      - exec:
+          - df.fillna(value="", inplace=True)            
+      - exec: >
+          df['matchid_hit_score_location_citycode'] = np.where(
+            df['matchid_location_citycode'] == df['hit_matchid_location_citycode'],
+            np.where(df['matchid_location_citycode'] == "",
+              0,
+              1)
+            , 0)
+      - exec: >
+          df['matchid_hit_score_location_city'] = np.where(
+            df['matchid_location_city'] == df['hit_matchid_location_city'],
+            np.where(df['matchid_location_city'] == "",
+              0.75,
+              1)
+            , 0)
       - exec: >
           df['matchid_hit_score_location_city_lv'] = np.where(
             df['matchid_hit_score_location_city'] == 1,
@@ -43,9 +58,13 @@ recipes:
           df['matchid_hit_score_location_history'] = np.where(
             df['matchid_hit_score_location_citycode'] == 1,
             1,
-            df.apply(lambda row:
+            np.where(
+              (df['hit_matchid_location_citycode'] == "") | (df['matchid_location_citycode'] == ""),
+              0,
+              df.apply(lambda row:
                      (row.matchid_location_citycode in row.hit_matchid_location_citycode_history) | (row.hit_matchid_location_citycode in row.matchid_location_citycode_history),
                      axis = 1)
+              )
             )
       
       - exec: >
@@ -53,10 +72,21 @@ recipes:
             (df['matchid_hit_score_location_citycode'] == 1) |
             (df['matchid_hit_score_location_history'] == 1),
             1,
-            np.where(df.matchid_location_country == "FRANCE",
-              0.9 * np.where(df.matchid_hit_score_location_distance > df.matchid_hit_score_location_city_lv,
-                             df.matchid_hit_score_location_distance,
-                             0.8 * df.matchid_hit_score_location_city_lv + 0.2 * df.matchid_hit_score_location_depcode),
-              df.matchid_hit_score_location_country_lv)
-            ).round(2)
+            np.where(
+              ((df.hit_matchid_location_city == "") & ((df.hit_matchid_location_depcode == "")|(df.hit_matchid_location_depcode == "99"))) |
+              ((df.matchid_location_city == "") & ((df.matchid_location_depcode == "")|(df.matchid_location_depcode == "99")) ),
+              np.where(
+                df.matchid_hit_score_location_country_lv < 0.5,
+                np.where(
+                  (df.hit_matchid_location_country == "") | (df.matchid_location_country == ""),
+                  0.7,
+                  0.5),
+                0.75),
+              np.where((df.matchid_location_country == "FRANCE"),
+                0.95 * np.where(df.matchid_hit_score_location_distance > df.matchid_hit_score_location_city_lv,
+                               df.matchid_hit_score_location_distance,
+                               0.8 * df.matchid_hit_score_location_city_lv + 0.2 * df.matchid_hit_score_location_depcode),
+                df.matchid_hit_score_location_country_lv)
+              ).round(2)
+            )
             

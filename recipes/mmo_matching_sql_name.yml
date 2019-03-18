@@ -43,20 +43,6 @@ recipes:
                 from sifa_pre_match_exact
                 where sifa_pre_match_exact.matchid_id = sifa.matchid_id
              )
-          and
-          (not exists
-            (
-              select matchid_id
-                from sifa_pre_match_lev
-                where sifa_pre_match_lev.matchid_id = sifa.matchid_id
-             ))
-          and
-          (not exists
-            (
-              select matchid_id
-                from sifa_pre_match_name_date
-                where sifa_pre_match_name_date.matchid_id = sifa.matchid_id
-             ))
           and          
           (       
             sifa.matchid_name_last_match=mmo.matchid_name_last_match

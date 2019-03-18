@@ -1,5 +1,5 @@
 recipes:
-  mmo_matchid_sql_name_date:
+  mmo_matching_sql_name_date:
     test_chunk_size: 100
     input:
       dataset: sifa_prep
@@ -44,16 +44,11 @@ recipes:
                 where sifa_pre_match_exact.matchid_id = sifa.matchid_id
              )
           and 
-          (not exists
-            (
-              select matchid_id
-                from sifa_pre_match_lev
-                where sifa_pre_match_lev.matchid_id = sifa.matchid_id
-             ))
-          and 
           (       
-            sifa.matchid_name_last_match=mmo.matchid_name_last_match
+            (sifa.matchid_name_last_match=mmo.matchid_name_last_match
+            or sifa.matchid_name_first_match=mmo.matchid_name_first_match)
             and sifa.date_nais=mmo.datenaissance_sngi
+            and sifa.matchid_location_depcode=mmo.dep_naissance_sngi
           )
         
     output: sifa_pre_match_name_date

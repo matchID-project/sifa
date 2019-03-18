@@ -1,6 +1,9 @@
 datasets:
   sifa_matched_backup:
     connector: upload
-    table: sifa_matched_backup.msgpack
-    type: msgpack
+    table: sifa_matched_annot.csv
+    type: csv
+    sep: '|'
+    encoding: 'utf8'
+   
 

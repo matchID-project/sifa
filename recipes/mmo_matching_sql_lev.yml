@@ -41,13 +41,13 @@ recipes:
             (
               select matchid_id
                 from sifa_pre_match_exact
-                where sifa_pre_match_exact.matchid_id = sifa.matchid_id
+                where sifa_pre_match_exact.matchid_id = sifa.matchid_id 
              )
           and 
             (
               levenshtein(sifa.matchid_name_last_match,mmo.matchid_name_last_match)<3 
               and levenshtein(sifa.matchid_name_first_match,mmo.matchid_name_first_match)<3
-              and substring(sifa.date_nais from 5 for 4)=substring(mmo.datenaissance_sngi from 5 for 4)
+              and substring(sifa.date_nais from 5 for 4) = substring(mmo.datenaissance_sngi from 5 for 4)
               and sifa.matchid_location_depcode=mmo.matchid_location_depcode
             )
           

@@ -41,9 +41,10 @@ recipes:
             sifa.matchid_name_last_match=mmo.matchid_name_last_match 
             and sifa.matchid_name_first_match=mmo.matchid_name_first_match
             and sifa.date_nais=mmo.datenaissance_sngi
-            and sifa.sexe=mmo."Sexe"
-            and sifa.matchid_location_depcode=mmo.matchid_location_depcode
-            and sifa.matchid_location_city=mmo.matchid_location_city
+            -- and sifa.sexe=mmo."Sexe"
+            and levenshtein(sifa.matchid_location_city,mmo.matchid_location_city)<3
+            -- and sifa.matchid_location_depcode=mmo.matchid_location_depcode
+            -- and sifa.matchid_location_city=mmo.matchid_location_city
           )
         
     output: sifa_pre_match_exact

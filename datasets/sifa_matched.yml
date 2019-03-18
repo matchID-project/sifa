@@ -8,7 +8,9 @@ datasets:
           properties:
             matchid_id:
               type: keyword 
-    validation: 
+    validation:
+      elasticsearch:
+        size: 1000
       actions:
         display: true
         action:

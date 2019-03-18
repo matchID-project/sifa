@@ -44,27 +44,6 @@ recipes:
                 where sifa.matchid_id="sifa_pre_match_exact".matchid_id 
              )
           and
-          (not exists
-            (
-              select matchid_id
-                from sifa_pre_match_lev
-                where sifa_pre_match_lev.matchid_id = sifa.matchid_id
-             ))
-          and
-          (not exists
-            (
-              select matchid_id
-                from sifa_pre_match_name_date
-                where sifa_pre_match_name_date.matchid_id = sifa.matchid_id
-             ))  
-          and
-          (not exists
-            (
-              select matchid_id
-                from sifa_pre_match_name
-                where sifa_pre_match_name.matchid_id = sifa.matchid_id
-             ))              
-          and          
           (
             sifa.date_nais=mmo.datenaissance_sngi
             and sifa.matchid_location_depcode=mmo.matchid_location_depcode
