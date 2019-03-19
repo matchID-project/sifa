@@ -1,9 +1,13 @@
 recipes:
   mmo_matching_sql:
     test_chunk_size: 100
-    threads: 10
+    threads: 20
     input: 
       dataset: sifa_pre_match_union
+      #dataset: sifa_prep
+      #select: >
+      #  select * from sifa_pre_match_union
+      #  where sifa_pre_match_union.matchid_id = '173106928EJ'      
       chunk: 10000
     output: sifa_matched_sql
     steps:
@@ -15,7 +19,7 @@ recipes:
       - scoring_location_sifa:
       - exec: >
           df['matchid_hit_score'] = np.where(df['an_form'] != "",
-                (100.0*df.matchid_hit_score_name*df.matchid_hit_score_date*(0.2+0.8*df.matchid_hit_score_location)*(df.matchid_hit_score_sex)).round(0),
+                (100.0*df.matchid_hit_score_name*(df.matchid_hit_score_date)*(0.2+0.8*df.matchid_hit_score_location)*(df.matchid_hit_score_sex)).round(0),
                 0)
       - exec:    
           - df['confiance'] = df.matchid_hit_score

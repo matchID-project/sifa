@@ -3,7 +3,7 @@ recipes:
     input: 
       dataset: sifa
       chunk: 30000
-    test_chunk_size: 100
+    test_chunk_size: 1000
     output: 
       dataset: sifa_prep
       chunk: 30000
@@ -11,7 +11,6 @@ recipes:
     steps:
       - exec:
           df['matchid_id'] = df.ine_rnie
-      
       - french_name_normalize_sifa:
 
       #location

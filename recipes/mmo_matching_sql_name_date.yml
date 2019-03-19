@@ -33,6 +33,7 @@ recipes:
           mmo."matchid_location_countrycode" as "hit_matchid_location_countrycode",
           mmo."matchid_location_depcode" as "hit_matchid_location_depcode",
           mmo."matchid_name_first_match" as "hit_matchid_name_first_match",
+          mmo."matchid_name_first_alter_match" as "hit_matchid_name_first_alter_match",
           mmo."matchid_name_last_match" as "hit_matchid_name_last_match",
           mmo."matchid_name_match" as "hit_matchid_name_match"
         from (select * from sifa_prep )  sifa, (select * from mmo_pg) mmo

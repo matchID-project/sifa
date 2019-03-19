@@ -2,15 +2,38 @@ recipes:
   french_name_normalize_mmo:
     input: mmo
     output: replace_output
+    test_chunk_size: 1000
     steps:
       - exec:
           - df['matchid_name_match'] = df['NomFamille']+ " " + df['Prenoms']
       - map:
           matchid_name_last_match: NomFamille
-          matchid_name_first_match: Prenoms      
+          matchid_name_first_match: Prenoms    
+          matchid_name_first_alter_match: Prenoms
       - normalize:
           select: matchid_name_.*match
       - replace:
+          select: matchid_name_first_match
+          regex:
+            - '(\S+\s+\S+)\s.*': '\1'
+      - join:
+          type: in_memory
+          dataset: french_first_names
+          strict:
+            matchid_name_first_match: first_name
+          select:
+            matchid_name_first_freq: frequency    
+      - exec:
+          - df['matchid_name_first_match']=np.where(df['matchid_name_first_freq']=='',df['matchid_name_first_match'].replace(r'\s+.*','', regex=True),df['matchid_name_first_match'])
+          - df['matchid_name_first_alter_match']=np.where(df['matchid_name_first_freq']=='',df['matchid_name_first_alter_match'].replace(r'^\S+\s+','', regex=True),df['matchid_name_first_alter_match'].replace(r'^(\S+\s+\S+\s+|\S+$)','', regex=True))
+      - pause:
+      - replace:
+          select: matchid_name_first_alter_match
+          regex:
+            - '^\S*$': ''
+            - '^\S*\s': ''
+
+      - replace:
           select: matchid_name_.*match
           regex:
-            - (^|\s)(le|du|de|de la|da|del|los|l)(\s): '\1\2'
+            - (^|\s)(le|du|de|de la|da|del|los|l)(\s): '\1\3'

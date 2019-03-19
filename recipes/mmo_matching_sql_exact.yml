@@ -33,13 +33,17 @@ recipes:
           mmo."matchid_location_countrycode" as "hit_matchid_location_countrycode",
           mmo."matchid_location_depcode" as "hit_matchid_location_depcode",
           mmo."matchid_name_first_match" as "hit_matchid_name_first_match",
+          mmo."matchid_name_first_alter_match" as "hit_matchid_name_first_alter_match",
           mmo."matchid_name_last_match" as "hit_matchid_name_last_match",
           mmo."matchid_name_match" as "hit_matchid_name_match"
         from (select * from sifa_prep) sifa, (select * from mmo_pg) mmo
         where 
           (
             sifa.matchid_name_last_match=mmo.matchid_name_last_match 
-            and sifa.matchid_name_first_match=mmo.matchid_name_first_match
+            and (
+                  sifa.matchid_name_first_match=mmo.matchid_name_first_match
+               or sifa.matchid_name_first_alter_match=mmo.matchid_name_first_match
+               or sifa.matchid_name_first_match=mmo.matchid_name_first_alter_match)
             and sifa.date_nais=mmo.datenaissance_sngi
             -- and sifa.sexe=mmo."Sexe"
             and levenshtein(sifa.matchid_location_city,mmo.matchid_location_city)<3

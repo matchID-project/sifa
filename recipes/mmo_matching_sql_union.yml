@@ -10,7 +10,7 @@ recipes:
         select * from sifa_pre_match_name
         union
         select * from sifa_pre_match_name_date
-        union
-        select * from sifa_pre_match_date
+        -- union
+        -- select * from sifa_pre_match_date
     output: sifa_pre_match_union
     steps:

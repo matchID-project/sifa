@@ -1,7 +1,8 @@
 recipes:
   scoring_date_sexe_sifa:
-    input: sifa_pre_match_union
+    input: sifa_pre_match_name
     output: replace_output
+    test_chunk_size: 1000
     steps:
       # sexe
       - exec:
@@ -17,7 +18,7 @@ recipes:
               (df['date_nais'] == "") |  (df['hit_datenaissance_sngi'] == ""),
               0.75,
               df.apply(lambda row: 
-                        round((1-0.1*levenshtein(row['date_nais'],row['hit_datenaissance_sngi']))**2
+                        round((1-0.1*levenshtein(row['date_nais'],row['hit_datenaissance_sngi']))**4
                         *(0.9 if re.search('0101$',row['date_nais']) else 1) ,2),
                       axis = 1)))
-      # - exec: df = df[(df.matchid_hit_score_date) >= 0.5]
+      - exec: df = df[(df.matchid_hit_score_date) >= 0.3]

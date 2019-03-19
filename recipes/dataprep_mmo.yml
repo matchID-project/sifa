@@ -7,6 +7,7 @@ recipes:
     output: 
       dataset: mmo_pg
       chunk: 100000
+      thread_count: 2
     threads: 8
     steps:
       - exec: 

@@ -1,6 +1,10 @@
 recipes:
   scoring_name_sifa:
-    input: sifa_pre_match_union
+    input: 
+      dataset: sifa_prep
+      select: >
+        select * from sifa_pre_match_union
+        where sifa_pre_match_union.matchid_id = '173106928EJ'
     output: replace_output
     steps:
       #########################
@@ -27,9 +31,15 @@ recipes:
           df['matchid_hit_score_name_lv_nn'] = np.where(
             df['matchid_name_last_match'] == df['hit_matchid_name_last_match'],
             1,
-            df.apply(lambda row:
+            np.where(df['matchid_name_last_match'].str.contains(" ") | df['hit_matchid_name_last_match'].str.contains(" "),
+                    df.apply(lambda row:
+                          0.5 * levenshtein_norm(row['matchid_name_last_match'].split(" "),row['hit_matchid_name_last_match'].split(" "))
+                          + levenshtein_norm(row['matchid_name_last_match'],row['hit_matchid_name_last_match']),
+                      axis = 1),  
+                    df.apply(lambda row:
                           levenshtein_norm(row['matchid_name_last_match'],row['hit_matchid_name_last_match']),
                       axis = 1)
+              )
             )
       - exec: >
           df['matchid_hit_score_name_lv_pp'] = np.where(
@@ -37,7 +47,8 @@ recipes:
             1,
             df.apply(lambda row:
                             max (levenshtein_norm(row['matchid_name_first_match'],row['hit_matchid_name_first_match']),
-                                 0.9 * levenshtein_norm(row['matchid_name_first_alter_match'],row['hit_matchid_name_first_match']) if len(row['matchid_name_first_alter_match']) else 0
+                                 0.9 * max (levenshtein_norm(row['matchid_name_first_alter_match'],row['hit_matchid_name_first_match']) if len(row['matchid_name_first_alter_match']) else 0,
+                                            levenshtein_norm(row['hit_matchid_name_first_alter_match'],row['matchid_name_first_match']) if len(row['hit_matchid_name_first_alter_match']) else 0)
                             ),
                       axis = 1)
             )
